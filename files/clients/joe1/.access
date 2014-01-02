@@ -1,0 +1,16 @@
+{
+  "content_keys":[
+    {
+      "version":1,
+      "algorithm":"AES\/CBC\/PKCS5Padding",
+      "key":"7pdl1-heIZftL5h1CyfPlg8gjBa_ZN3CDN3KFl-GdIU\r\n"
+    }
+  ],
+  "integrity_keys":[
+    {
+      "version":1,
+      "algorithm":"HmacSHA256",
+      "key":"Vdax3n_BXME5bEkyFtGiJdOl-5yA6sTUPtY9ngEBEKc\r\n"
+    }
+  ]
+}

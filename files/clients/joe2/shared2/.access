@@ -1,0 +1,18 @@
+{
+  "owner":"joe1",
+  "folder":"folder1",
+  "content_keys":[
+    {
+      "version":1,
+      "algorithm":"AES\/CBC\/PKCS5Padding",
+      "key":"LRzGvx0fvwAgZVVr5APz_zjZfIVx-ZP7RpHly1w-78E\r\n"
+    }
+  ],
+  "integrity_keys":[
+    {
+      "version":1,
+      "algorithm":"HmacSHA256",
+      "key":"fO2d6hRyHIzkwBzTss0lx-v1ke5hS7gqUcyVMdF0cUA\r\n"
+    }
+  ]
+}

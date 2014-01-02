@@ -1,0 +1,138 @@
+<project name="EncSync" basedir="." default="clean-build">
+
+    <property name="src.dir"     value="src"/>
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+    <property name="lib.dir"     value="lib"/>
+
+    <property name="client-jar"  value="${jar.dir}/${ant.project.name}-client.jar"/>
+    <property name="server-jar"  value="${jar.dir}/${ant.project.name}-server.jar"/>
+
+    <property name="client-class"  value="client.ClientMain"/>
+    <property name="server-class"  value="server.ServerMain"/>
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" source="1.7" target="1.7" includeantruntime="false"/>
+    </target>
+
+    <target name="jar-client" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${client-jar}" basedir="${classes.dir}">
+            <zipgroupfileset dir="${lib.dir}" includes="**/*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="${client-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jar-server" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${server-jar}" basedir="${classes.dir}">
+            <zipgroupfileset dir="${lib.dir}" includes="**/*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="${server-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run-client" depends="jar-client">
+        <java fork="true" classname="${client-class}">
+            <arg value="${arg0}"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${client-jar}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="run-server" depends="jar-server">
+        <java fork="true" classname="${server-class}">
+            <arg value="${arg0}"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${server-jar}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="register-user" depends="jar-client">
+        <java fork="true" classname="client.tools.PutAuthShell">
+            <arg value="${arg0}"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${client-jar}"/>
+            </classpath>
+        </java>
+    </target>
+
+   <target name="put-folder" depends="jar-client">
+        <java fork="true" classname="client.tools.PutFolderShell">
+            <arg value="${arg0}"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${client-jar}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="access-bundle" depends="jar-client">
+        <java fork="true" classname="client.tools.AccessBundleShell">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${client-jar}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="recover-client" depends="jar-client">
+        <java fork="true" classname="client.tools.ClientRecovery">
+            <arg value="${arg0}"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${client-jar}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="recover-server" depends="jar-server">
+        <java fork="true" classname="server.tools.ServerRecovery">
+            <arg value="${arg0}"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${server-jar}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <path id="application" location="${client-jar}"/>
+
+    <target name="junit" depends="jar-client">
+        <junit printsummary="yes">
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="application"/>
+            </classpath>
+            <formatter type="plain" usefile="false"/>
+            <batchtest fork="yes">
+                <fileset dir="${src.dir}">
+                    <include name="test/*Test.java"/>
+                    <exclude name="test/ConfigAndBundleTest.java"/>
+                    <exclude name="test/MiscTest.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="clean-build" depends="clean,jar-client,jar-server"/>
+
+</project>
